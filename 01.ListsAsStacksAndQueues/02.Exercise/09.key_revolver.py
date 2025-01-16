@@ -1,34 +1,34 @@
-from collections import deque
-from datetime import datetime, timedelta
+def key_revolver():
+    bullet_price = int(input())
+    barrel_size = int(input())
+    bullets = list(map(int, input().split()))
+    locks = list(map(int, input().split()))
+    intelligence_value = int(input())
 
+    money_spent = 0
+    bullet_count = len(bullets)
 
-def robotics_simulation(robots_data, start_time, products):
-    robots = []
-    busy_until = {}
+    while bullets and locks:
+        bullet = bullets.pop()
+        lock = locks[0]
 
-    for data in robots_data.split(";"):
-        name, time = data.split("-")
-        robots.append((name, int(time)))
-        busy_until[name] = datetime.strptime(start_time, "%H:%M:%S")
-
-    queue = deque(products)
-    current_time = datetime.strptime(start_time, "%H:%M:%S")
-
-    while queue:
-        current_time += timedelta(seconds=1)
-        product = queue.popleft()
-
-        for name, time in robots:
-            if current_time >= busy_until[name]:
-                busy_until[name] = current_time + timedelta(seconds=time)
-                print(f"{name} - {product} [{current_time.strftime('%H:%M:%S')}]")
-                break
+        if bullet >= lock:
+            print("Bang!")
+            locks.pop(0)
         else:
-            queue.append(product)
+            print("Ping!")
 
+        money_spent += bullet_price
 
-# Example usage:
-robots_data = "ROB-15;SS2-10;NX8000-3"
-start_time = "08:00:00"
-products = ["detail", "glass", "wood", "apple", "End"]
-robotics_simulation(robots_data, start_time, [p for p in products if p != "End"])
+        if not bullets and locks:
+            print("Reloading!")
+
+    remaining_locks = len(locks)
+    if remaining_locks == 0:
+
+        money_earned = intelligence_value - money_spent
+        print(f"{len(bullets)} bullets left. Earned ${money_earned}")
+    else:
+        print(f"Couldn't get through. Locks left: {remaining_locks}")
+
+key_revolver()
